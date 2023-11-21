@@ -8,7 +8,7 @@ author: |
 institute: |
 	\inst{1}Российский Университет Дружбы Народов
 
-date: 5 ноября, 2023, Москва, Россия
+date: 20 ноября, 2023, Москва, Россия
 
 ## Formatting
 mainfont: PT Serif
