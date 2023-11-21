@@ -2,9 +2,9 @@
 ## Front matter
 lang: ru-RU
 title: Шифр гаммирования
-author: Кальсин Захар
+author: Эттеев Сулейман
 institute: Российский Университет Дружбы Народов
-date: 5 ноября, 2023, Москва, Россия
+date: 20 ноября, 2023, Москва, Россия
 
 ## Formatting
 mainfont: PT Serif
