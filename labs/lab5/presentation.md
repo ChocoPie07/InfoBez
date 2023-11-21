@@ -48,8 +48,6 @@ section-titles: true
 
 ## Программа readfile
 
-![результат программы readfile](images/6.png){ #fig:003 width=70% height=70%}
-
 ## Исследование Sticky-бита
 
 ![исследование Sticky-бита](images/8.png){ #fig:004 width=70% height=70%}
