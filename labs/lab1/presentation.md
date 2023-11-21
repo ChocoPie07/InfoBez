@@ -1,4 +1,5 @@
 ---
+---
 ## Front matter
 lang: ru-RU
 title: Установка ОС на виртуальную машину
@@ -26,6 +27,7 @@ header-includes:
 aspectratio: 43
 section-titles: true
 
+---
 ---
 
 # Цели и задачи работы
