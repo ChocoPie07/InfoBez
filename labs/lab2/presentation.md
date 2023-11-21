@@ -2,7 +2,7 @@
 ## Front matter
 lang: ru-RU
 title: Дискреционное разграничение прав в Linux. Основные атрибуты
-author:|
+author: |
          Эттеев Сулейманр\inst{1}
 
 institute: |
