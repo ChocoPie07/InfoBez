@@ -38,15 +38,15 @@ section-titles: true
 
 ## Определяем UID и группу двух пользователей
 
-![Информация о пользователях](images/2.png){ #fig:001 width=70% height=70% }
+![Информация о пользователях](images/1.png){ #fig:001 width=70% height=70% }
 
 ## Файл с данными о пользователях
 
-![Сожержимое файла /etc/group](images/3.png){ #fig:002 width=70% height=70% }
+![Сожержимое файла /etc/group](images/2.png){ #fig:002 width=70% height=70% }
 
 ## Атрибуты директории
 
-![Снятие атрибутов с директории](images/4.png){ #fig:003 width=70% height=70%}
+![Снятие атрибутов с директории](images/3.png){ #fig:003 width=70% height=70%}
 
 ## Заполнение таблицы
 
