@@ -1,0 +1,83 @@
+<h1 id="цель-работы">Цель работы</h1>
+<p>Развить навыки администрирования ОС Linux. Получить первое практическое знакомство с технологией SELinux. Проверить работу SELinx на практике совместно с веб-сервером Apache</p>
+<h1 id="выполнение-лабораторной-работы">Выполнение лабораторной работы</h1>
+<h2 id="подготовка">Подготовка</h2>
+<ol type="1">
+<li><p>Установили httpd</p></li>
+<li><p>Задали имя сервера</p></li>
+<li><p>Открыли порты для работы с протоколом http</p></li>
+</ol>
+<h2 id="изучение-механики-setuid">Изучение механики SetUID</h2>
+<ol type="1">
+<li><p>Войдите в систему с полученными учётными данными и убедитесь, что SELinux работает в режиме enforcing политики targeted с помощью команд getenforce и sestatus.</p></li>
+<li><p>Обратитесь с помощью браузера к веб-серверу, запущенному на вашем компьютере, и убедитесь, что последний работает: service httpd status или /etc/rc.d/init.d/httpd status Если не работает, запустите его так же, но с параметром start.</p></li>
+</ol>
+<figure>
+<img src="images/1.png" id="fig:001" style="width:70.0%;height:70.0%" alt="запуск http" /><figcaption aria-hidden="true">запуск http</figcaption>
+</figure>
+<ol start="3" type="1">
+<li>Найдите веб-сервер Apache в списке процессов, определите его контекст безопасности и занесите эту информацию в отчёт. Например, можно использовать команду ps auxZ | grep httpd или ps -eZ | grep httpd</li>
+</ol>
+<figure>
+<img src="images/2.png" id="fig:002" style="width:70.0%;height:70.0%" alt="контекст безопасности http" /><figcaption aria-hidden="true">контекст безопасности http</figcaption>
+</figure>
+<ol start="4" type="1">
+<li>Посмотрите текущее состояние переключателей SELinux для Apache с помощью команды sestatus -bigrep httpd Обратите внимание, что многие из них находятся в положении «off».</li>
+</ol>
+<figure>
+<img src="images/3.png" id="fig:003" style="width:70.0%;height:70.0%" alt="переключатели SELinux для http" /><figcaption aria-hidden="true">переключатели SELinux для http</figcaption>
+</figure>
+<ol start="5" type="1">
+<li><p>Посмотрите статистику по политике с помощью команды seinfo, также определите множество пользователей, ролей, типов.</p></li>
+<li><p>Определите тип файлов и поддиректорий, находящихся в директории /var/www, с помощью команды ls -lZ /var/www. В поддиректориях могут располагаться системные скрипты и контент для http.</p></li>
+<li><p>Определите тип файлов, находящихся в директории /var/www/html: ls -lZ /var/www/html. В директории изначально нет файлов.</p></li>
+<li><p>Определите круг пользователей, которым разрешено создание файлов в директории /var/www/html. Создавать файлы может только root.</p></li>
+<li><p>Создайте от имени суперпользователя (так как в дистрибутиве после установки только ему разрешена запись в директорию) html-файл /var/www/html/test.html следующего содержания: Test</p></li>
+<li><p>Проверьте контекст созданного вами файла. Занесите в отчёт контекст, присваиваемый по умолчанию вновь созданным файлам в директории /var/www/html.</p></li>
+<li><p>Обратитесь к файлу через веб-сервер, введя в браузере адрес http://127.0.0.1/test.html. Убедитесь, что файл был успешно отображён.</p></li>
+</ol>
+<figure>
+<img src="images/4.png" id="fig:004" style="width:70.0%;height:70.0%" alt="создание html-файла и доступ по http" /><figcaption aria-hidden="true">создание html-файла и доступ по http</figcaption>
+</figure>
+<ol start="12" type="1">
+<li><p>Изучите справку man httpd_selinux и выясните, какие контексты файлов определены для httpd. Сопоставьте их с типом файла test.html. Проверить контекст файла можно командой ls -Z. ls -Z /var/www/html/test.html. Основным контекстом является httpd_sys_content_t, его мы и увидели в выводе команды.</p></li>
+<li><p>Измените контекст файла /var/www/html/test.html с httpd_sys_content_t на любой другой, к которому процесс httpd не должен иметь доступа, например, на samba_share_t: chcon -t samba_share_t /var/www/html/test.html ls -Z /var/www/html/test.html После этого проверьте, что контекст поменялся.</p></li>
+<li><p>Попробуйте ещё раз получить доступ к файлу через веб-сервер, введя в браузере адрес http://127.0.0.1/test.html. Вы должны получить сообщение об ошибке: Forbidden You don’t have permission to access /test.html on this server. При изменении контекста файл стал считаться чужим для http и программа не может его прочитать.</p></li>
+</ol>
+<figure>
+<img src="images/5.png" id="fig:005" style="width:70.0%;height:70.0%" alt="ошибка доступа после изменения контекста" /><figcaption aria-hidden="true">ошибка доступа после изменения контекста</figcaption>
+</figure>
+<ol start="15" type="1">
+<li>Проанализируйте ситуацию. Почему файл не был отображён, если права доступа позволяют читать этот файл любому пользователю? ls -l /var/www/html/test.html Просмотрите log-файлы веб-сервера Apache. Также просмотрите системный лог-файл: tail /var/log/messages Если в системе окажутся запущенными процессы setroubleshootd и audtd, то вы также сможете увидеть ошибки, аналогичные указанным выше, в файле /var/log/audit/audit.log. Проверьте это утверждение самостоятельно.</li>
+</ol>
+<figure>
+<img src="images/6.png" id="fig:006" style="width:70.0%;height:70.0%" alt="лог ошибок" /><figcaption aria-hidden="true">лог ошибок</figcaption>
+</figure>
+<ol start="16" type="1">
+<li>Попробуйте запустить веб-сервер Apache на прослушивание ТСР-порта 81 (а не 80, как рекомендует IANA и прописано в /etc/services). Для этого в файле /etc/httpd/httpd.conf найдите строчку Listen 80 и замените её на Listen 81.</li>
+</ol>
+<figure>
+<img src="images/7.png" id="fig:007" style="width:70.0%;height:70.0%" alt="переключение порта" /><figcaption aria-hidden="true">переключение порта</figcaption>
+</figure>
+<ol start="17" type="1">
+<li><p>Выполните перезапуск веб-сервера Apache. Произошёл сбой? Поясните почему? Сбой не происходит, порт 81 уже вписан в разрешенные</p></li>
+<li><p>Проанализируйте лог-файлы: tail -nl /var/log/messages Просмотрите файлы /var/log/http/error_log, /var/log/http/access_log и /var/log/audit/audit.log и выясните, в каких файлах появились записи.</p></li>
+<li><p>Выполните команду semanage port -a -t http_port_t -р tcp 81 После этого проверьте список портов командой semanage port -l | grep http_port_t Убедитесь, что порт 81 появился в списке.</p></li>
+<li><p>Попробуйте запустить веб-сервер Apache ещё раз.</p></li>
+<li><p>Верните контекст httpd_sys_cоntent__t к файлу /var/www/html/ test.html: chcon -t httpd_sys_content_t /var/www/html/test.html После этого попробуйте получить доступ к файлу через веб-сервер, введя в браузере адрес http://127.0.0.1:81/test.html. Вы должны увидеть содержимое файла — слово «test».</p></li>
+</ol>
+<figure>
+<img src="images/8.png" id="fig:008" style="width:70.0%;height:70.0%" alt="доступ по http на 81 порт" /><figcaption aria-hidden="true">доступ по http на 81 порт</figcaption>
+</figure>
+<ol start="22" type="1">
+<li><p>Исправьте обратно конфигурационный файл apache, вернув Listen 80.</p></li>
+<li><p>Удалите привязку http_port_t к 81 порту: semanage port -d -t http_port_t -p tcp 81 и проверьте, что порт 81 удалён.</p></li>
+<li><p>Удалите файл /var/www/html/test.html: rm /var/www/html/test.html</p></li>
+</ol>
+<h1 id="выводы">Выводы</h1>
+<p>В процессе выполнения лабораторной работы мною были получены базовые навыки работы с технологией seLinux.</p>
+<h1 class="unnumbered" id="список-литературы">Список литературы</h1>
+<ol type="1">
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/index">SELinux в CentOS</a></li>
+<li><a href="https://httpd.apache.org/">Веб-сервер Apache</a></li>
+</ol>

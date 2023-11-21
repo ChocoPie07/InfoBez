@@ -1,0 +1,131 @@
+<h1 id="цель-работы">Цель работы</h1>
+<p>Освоить на практике применение режима однократного гаммирования на примере кодирования различных исходных текстов одним ключом.</p>
+<h1 id="теоретические-сведения">Теоретические сведения</h1>
+<h2 id="шифр-гаммирования">Шифр гаммирования</h2>
+<p>Гаммирование – это наложение (снятие) на открытые (зашифрованные) данные криптографической гаммы, т.е. последовательности элементов данных, вырабатываемых с помощью некоторого криптографического алгоритма, для получения зашифрованных (открытых) данных.</p>
+<p>Принцип шифрования гаммированием заключается в генерации гаммы шифра с помощью датчика псевдослучайных чисел и наложении полученной гаммы шифра на открытые данные обратимым образом (например, используя операцию сложения по модулю 2). Процесс дешифрования сводится к повторной генерации гаммы шифра при известном ключе и наложении такой же гаммы на зашифрованные данные. Полученный зашифрованный текст является достаточно трудным для раскрытия в том случае, если гамма шифра не содержит повторяющихся битовых последовательностей и изменяется случайным образом для каждого шифруемого слова. Если период гаммы превышает длину всего зашифрованного текста и неизвестна никакая часть исходного текста, то шифр можно раскрыть только прямым перебором (подбором ключа). В этом случае криптостойкость определяется размером ключа.</p>
+<p>Метод гаммирования становится бессильным, если известен фрагмент исходного текста и соответствующая ему шифрограмма. В этом случае простым вычитанием по модулю 2 получается отрезок псевдослучайной последовательности и по нему восстанавливается вся эта последовательность.</p>
+<p>Метод гаммирования с обратной связью заключается в том, что для получения сегмента гаммы используется контрольная сумма определенного участка шифруемых данных. Например, если рассматривать гамму шифра как объединение непересекающихся множеств H(j), то процесс шифрования можно пердставить следующими шагами:</p>
+<ol type="1">
+<li><p>Генерация сегмента гаммы H(1) и наложение его на соответствующий участок шифруемых данных.</p></li>
+<li><p>Подсчет контрольной суммы участка, соответствующего сегменту гаммы H(1).</p></li>
+<li><p>Генерация с учетом контрольной суммы уже зашифрованного участка данных следующего сегмента гамм H(2).</p></li>
+<li><p>Подсчет контрольной суммы участка данных, соответствующего сегменту данных H(2) и т.д.</p></li>
+</ol>
+<h2 id="идея-взлома">Идея взлома</h2>
+<p>Шифротексты обеих телеграмм можно получить по формулам режима однократного гаммирования:</p>
+<p><span class="math display"><em>C</em><sub>1</sub> = <em>P</em><sub>1</sub> ⊕ <em>K</em></span> <span class="math display"><em>C</em><sub>2</sub> = <em>P</em><sub>2</sub> ⊕ <em>K</em></span></p>
+<p>Открытый текст можно найти, зная шифротекст двух телеграмм, зашифрованных одним ключом. Для это оба равенства складываются по модулю 2. Тогда с учётом свойства операции XOR получаем:</p>
+<p><span class="math display"><em>C</em><sub>1</sub> ⊕ <em>C</em><sub>2</sub> = <em>P</em><sub>1</sub> ⊕ <em>K</em> ⊕ <em>P</em><sub>2</sub> ⊕ <em>K</em> = <em>P</em><sub>1</sub> ⊕ <em>P</em><sub>2</sub></span></p>
+<p>Предположим, что одна из телеграмм является шаблоном — т.е. имеет текст фиксированный формат, в который вписываются значения полей. Допустим, что злоумышленнику этот формат известен. Тогда он получает достаточно много пар <span class="math inline"><em>C</em><sub>1</sub> ⊕ <em>C</em><sub>2</sub></span> (известен вид обеих шифровок). Тогда зная <span class="math inline"><em>P</em><sub>1</sub></span> имеем:</p>
+<p><span class="math display"><em>C</em><sub>1</sub> ⊕ <em>C</em><sub>2</sub> ⊕ <em>P</em><sub>1</sub> = <em>P</em><sub>1</sub> ⊕ <em>P</em><sub>2</sub> ⊕ <em>P</em><sub>1</sub> = <em>P</em><sub>2</sub></span></p>
+<p>Таким образом, злоумышленник получает возможность определить те символы сообщения <span class="math inline"><em>P</em><sub>2</sub></span>, которые находятся на позициях известного шаблона сообщения <span class="math inline"><em>P</em><sub>1</sub></span>. В соответствии с логикой сообщения <span class="math inline"><em>P</em><sub>2</sub></span>, злоумышленник имеет реальный шанс узнать ещё некоторое количество символов сообщения <span class="math inline"><em>P</em><sub>2</sub></span>. Затем вновь используется равенство с подстановкой вместо <span class="math inline"><em>P</em><sub>1</sub></span> полученных на предыдущем шаге новых символов сообщения <span class="math inline"><em>P</em><sub>2</sub></span>. И так далее. Действуя подобным образом, злоумышленник даже если не прочитает оба сообщения, то значительно уменьшит пространство их поиска.</p>
+<h1 id="выполнение-работы">Выполнение работы</h1>
+<h2 id="реализация-взломщика-шифратора-и-дешифратора-на-python">Реализация взломщика, шифратора и дешифратора на Python</h2>
+<pre><code># создаем алфавит из русских букв и цифр
+# он нужен для гаммирования
+a = ord(&quot;а&quot;)
+alphabeth = [chr(i) for i in range(a, a + 32)]
+a = ord(&quot;0&quot;)
+for i in range(a, a+10):
+    alphabeth.append(chr(i))
+
+a = ord(&quot;А&quot;)
+for i in range(1040, 1072):
+    alphabeth.append(chr(i))
+print(alphabeth)
+P1 = &quot;НаВашисходящийот1204&quot;
+P2 = &quot;ВСеверныйфилиалБанка&quot;
+# длина ключа 20
+key = &quot;05 0C 17 7F 0E 4E 37 D2 94 10 09 2E 22 57 FF C8 0B B2 70 54&quot;
+
+
+def vzlom(P1, P2):
+    code = []
+    for i in range(20):
+        code.append(alphabeth[(alphabeth.index(P1[i]) + alphabeth.index(P2[i]))  % len(alphabeth)])
+    #получили известные символы в шаблоне
+    print(code)
+    print(code[16], &quot; и &quot;, code[19])
+    p3 = &quot;&quot;.join(code)
+    print(p3)
+
+vzlom(P1, P2)</code></pre>
+<pre><code>def shifr(P1):
+    # создаем алфавит
+    dicts = {&quot;а&quot;: 1, &quot;б&quot;: 2, &quot;в&quot;: 3, &quot;г&quot;: 4, &quot;д&quot;: 5, &quot;е&quot;: 6, &quot;ё&quot;: 7, &quot;ж&quot;: 8, &quot;з&quot;: 9, &quot;и&quot;: 10, &quot;й&quot;: 11, &quot;к&quot;: 12, &quot;л&quot;: 13,
+             &quot;м&quot;: 14, &quot;н&quot;: 15, &quot;о&quot;: 16, &quot;п&quot;: 17,
+             &quot;р&quot;: 18, &quot;с&quot;: 19, &quot;т&quot;: 20, &quot;у&quot;: 21, &quot;ф&quot;: 22, &quot;х&quot;: 23, &quot;ц&quot;: 24, &quot;ч&quot;: 25, &quot;ш&quot;: 26, &quot;щ&quot;: 27, &quot;ъ&quot;: 28,
+             &quot;ы&quot;: 29, &quot;ь&quot;: 30, &quot;э&quot;: 31, &quot;ю&quot;: 32, &quot;я&quot;: 32, &quot;А&quot;:33 , &quot;Б&quot;: 34, &quot;В&quot;: 35 , &quot;Г&quot;:36 , &quot;Д&quot;:37 , &quot;Е&quot;:38 , &quot;Ё&quot;:39 , &quot;Ж&quot;:40 , &quot;З&quot;:41 ,
+                &quot;И&quot;:42,&quot;Й&quot;:43 , &quot;К&quot;:44 , &quot;Л&quot;:45 , &quot;М&quot;:46 , &quot;Н&quot;:47 , &quot;О&quot;:48 , &quot;П&quot;:49 , &quot;Р&quot;:50 , &quot;С&quot;:51 , &quot;Т&quot;:52 , &quot;У&quot;:53 , &quot;Ф&quot;:54 , &quot;Х&quot;:55 , &quot;Ц&quot;:56 , &quot;Ч&quot;:57 ,
+    &quot;Ш&quot;:58,&quot;Щ&quot;:59 , &quot;Ъ&quot;:60 , &quot;Ы&quot;:61 , &quot;Ь&quot;:62 , &quot;Э&quot;:63 , &quot;Ю&quot;:64 , &quot;Я&quot;:65 , &quot;1&quot;:66 , &quot;2&quot;:67 , &quot;3&quot;:68 , &quot;4&quot;:69 , &quot;5&quot;:70 , &quot;6&quot;:71 , &quot;7&quot;: 72, &quot;8&quot;:73 , &quot;9&quot;:74 , &quot;0&quot;:75
+    }
+    # меняем местами ключ и значение, такой словарь понадобится в будущем
+    dict2 = {v: k for k, v in dicts.items()}
+    text = P1
+    gamma = input(&quot;Введите гамму(на русском языке! Да и пробелы тоже нельзя! Короче, только символы из dict&quot;)
+    listofdigitsoftext = list()  # сюда будем записывать числа букв из текста
+    listofdigitsofgamma = list()  # для гаммы
+    # запишем числа в список
+    for i in text:
+        listofdigitsoftext.append(dicts[i])
+    print(&quot;Числа текста&quot;, listofdigitsoftext)
+    # то же самое сделаем с гаммой
+    for i in gamma:
+        listofdigitsofgamma.append(dicts[i])
+    print(&quot;числа гаммы&quot;, listofdigitsofgamma)
+    listofdigitsresult = list()  # сюда будем записывать результат
+    ch = 0
+    for i in text:
+        try:
+            a = dicts[i] + listofdigitsofgamma[ch]
+        except:
+            ch = 0
+            a = dicts[i] + listofdigitsofgamma[ch]
+        if a &gt; 75:
+            a = a%75
+            print(a)
+        ch += 1
+        listofdigitsresult.append(a)
+    print(&quot;Числа зашифрованного текста&quot;, listofdigitsresult)
+    # теперь обратно числа представим в виде букв
+    textencrypted = &quot;&quot;
+    for i in listofdigitsresult:
+        textencrypted += dict2[i]
+    print(&quot;Зашифрованный текст: &quot;, textencrypted)
+    # теперь приступим к реализации алгоритма дешифровки
+    listofdigits = list()
+    for i in textencrypted:
+        listofdigits.append(dicts[i])
+    ch = 0
+    listofdigits1 = list()
+    for i in listofdigits:
+        try:
+            a = i - listofdigitsofgamma[ch]
+        except:
+            ch=0
+            a = i - listofdigitsofgamma[ch]
+        if a &lt; 1:
+            a = 75 + a
+        listofdigits1.append(a)
+        ch += 1
+    textdecrypted = &quot;&quot;
+    for i in listofdigits1:
+        textdecrypted += dict2[i]
+    print(&quot;Расшифрованный текст&quot;, textdecrypted)
+
+shifr(P1)</code></pre>
+<h2 id="контрольный-пример">Контрольный пример</h2>
+<figure>
+<img src="images/1.png" id="fig:001" style="width:70.0%;height:70.0%" alt="Работа алгоритма взлома ключа" /><figcaption aria-hidden="true">Работа алгоритма взлома ключа</figcaption>
+</figure>
+<figure>
+<img src="images/2.png" id="fig:002" style="width:70.0%;height:70.0%" alt="Работа алгоритма шифрования и дешивровки" /><figcaption aria-hidden="true">Работа алгоритма шифрования и дешивровки</figcaption>
+</figure>
+<h1 id="выводы">Выводы</h1>
+<p>В ходе выполнения лабораторной работы было разработано приложение, позволяющее шифровать тексты в режиме однократного гаммирования.</p>
+<h1 class="unnumbered" id="список-литературы">Список литературы</h1>
+<ol type="1">
+<li><a href="http://altaev-aa.narod.ru/security/XOR.html">Шифрование методом гаммирования</a></li>
+<li><a href="https://kabinfo.ucoz.ru/index/shifr_reshetka_kardano/0-374">Режим гаммирования в блочном алгоритме шифрования</a></li>
+</ol>

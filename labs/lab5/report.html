@@ -1,0 +1,149 @@
+<h1 id="цель-работы">Цель работы</h1>
+<p>Изучение механизмов изменения идентификаторов, применения SetUID и Sticky-битов. Получение практических навыков работы в консоли с дополнительными атрибутами. Рассмотрение работы механизма смены идентификатора процессов пользователей, а также влияние бита Sticky на запись и удаление файлов.</p>
+<h1 id="выполнение-лабораторной-работы">Выполнение лабораторной работы</h1>
+<h2 id="подготовка">Подготовка</h2>
+<ol type="1">
+<li><p>Для выполнения части заданий требуются средства разработки приложений. Проверили наличие установленного компилятора gcc командой gcc -v: компилятор обнаружен.</p></li>
+<li><p>Чтобы система защиты SELinux не мешала выполнению заданий работы, отключили систему запретов до очередной перезагрузки системы командой setenforce 0:</p></li>
+<li><p>Команда getenforce вывела Permissive:</p></li>
+</ol>
+<figure>
+<img src="images/1.png" id="fig:001" style="width:70.0%;height:70.0%" alt="подготовка к работе" /><figcaption aria-hidden="true">подготовка к работе</figcaption>
+</figure>
+<h2 id="изучение-механики-setuid">Изучение механики SetUID</h2>
+<ol type="1">
+<li><p>Вошли в систему от имени пользователя guest.</p></li>
+<li><p>Написали программу simpleid.c.</p></li>
+</ol>
+<figure>
+<img src="images/2.png" id="fig:002" style="width:70.0%;height:70.0%" alt="программа simpleid" /><figcaption aria-hidden="true">программа simpleid</figcaption>
+</figure>
+<ol start="3" type="1">
+<li><p>Скомпилировали программу и убедились, что файл программы создан: gcc simpleid.c -o simpleid</p></li>
+<li><p>Выполнили программу simpleid командой ./simpleid</p></li>
+<li><p>Выполнили системную программу id с помощью команды id. uid и gid совпадает в обеих программах</p></li>
+</ol>
+<figure>
+<img src="images/3.png" id="fig:003" style="width:70.0%;height:70.0%" alt="результат программы simpleid" /><figcaption aria-hidden="true">результат программы simpleid</figcaption>
+</figure>
+<ol start="6" type="1">
+<li>Усложнили программу, добавив вывод действительных идентификаторов.</li>
+</ol>
+<figure>
+<img src="images/4.png" id="fig:004" style="width:70.0%;height:70.0%" alt="программа simpleid2" /><figcaption aria-hidden="true">программа simpleid2</figcaption>
+</figure>
+<ol start="7" type="1">
+<li>Скомпилировали и запустили simpleid2.c:</li>
+</ol>
+<pre><code>gcc simpleid2.c -o simpleid2
+./simpleid2</code></pre>
+<ol start="8" type="1">
+<li>От имени суперпользователя выполнили команды:</li>
+</ol>
+<pre><code>chown root:guest /home/guest/simpleid2
+chmod u+s /home/guest/simpleid2</code></pre>
+<ol start="9" type="1">
+<li><p>Использовали su для повышения прав до суперпользователя</p></li>
+<li><p>Выполнили проверку правильности установки новых атрибутов и смены владельца файла simpleid2:</p></li>
+</ol>
+<pre><code>ls -l simpleid2</code></pre>
+<ol start="11" type="1">
+<li>Запустили simpleid2 и id:</li>
+</ol>
+<pre><code>./simpleid2
+id</code></pre>
+<p>Результат выполнения программ теперь немного отличается</p>
+<ol start="12" type="1">
+<li>Проделали тоже самое относительно SetGID-бита.</li>
+</ol>
+<figure>
+<img src="images/5.png" id="fig:005" style="width:70.0%;height:70.0%" alt="результат программы simpleid2" /><figcaption aria-hidden="true">результат программы simpleid2</figcaption>
+</figure>
+<ol start="13" type="1">
+<li>Написали программу readfile.c</li>
+</ol>
+<figure>
+<img src="images/6.png" id="fig:006" style="width:70.0%;height:70.0%" alt="программа readfile" /><figcaption aria-hidden="true">программа readfile</figcaption>
+</figure>
+<ol start="14" type="1">
+<li>Откомпилировали её.</li>
+</ol>
+<pre><code>gcc readfile.c -o readfile</code></pre>
+<ol start="15" type="1">
+<li>Сменили владельца у файла readfile.c и изменили права так, чтобы только суперпользователь (root) мог прочитать его, a guest не мог.</li>
+</ol>
+<pre><code>chown root:guest /home/guest/readfile.c
+chmod 700 /home/guest/readfile.c</code></pre>
+<ol start="16" type="1">
+<li><p>Проверили, что пользователь guest не может прочитать файл readfile.c.</p></li>
+<li><p>Сменили у программы readfile владельца и установили SetU’D-бит.</p></li>
+<li><p>Проверили, может ли программа readfile прочитать файл readfile.c</p></li>
+<li><p>Проверили, может ли программа readfile прочитать файл /etc/shadow</p></li>
+</ol>
+<figure>
+<img src="images/7.png" id="fig:007" style="width:70.0%;height:70.0%" alt="результат программы readfile" /><figcaption aria-hidden="true">результат программы readfile</figcaption>
+</figure>
+<h2 id="исследование-sticky-бита">Исследование Sticky-бита</h2>
+<ol type="1">
+<li>Выяснили, установлен ли атрибут Sticky на директории /tmp:</li>
+</ol>
+<pre><code>ls -l / | grep tmp</code></pre>
+<ol start="2" type="1">
+<li>От имени пользователя guest создали файл file01.txt в директории /tmp со словом test:</li>
+</ol>
+<pre><code>echo &quot;test&quot; &gt; /tmp/file01.txt</code></pre>
+<ol start="3" type="1">
+<li>Просмотрели атрибуты у только что созданного файла и разрешили чтение и запись для категории пользователей «все остальные»:</li>
+</ol>
+<pre><code>ls -l /tmp/file01.txt
+chmod o+rw /tmp/file01.txt
+ls -l /tmp/file01.txt</code></pre>
+<p>Первоначально все группы имели право на чтение, а запись могли осуществлять все, кроме «остальных пользователей».</p>
+<ol start="4" type="1">
+<li>От пользователя (не являющегося владельцем) попробовали прочитать файл /file01.txt:</li>
+</ol>
+<pre><code>cat /file01.txt</code></pre>
+<ol start="5" type="1">
+<li>От пользователя попробовали дозаписать в файл /file01.txt слово test3 командой:</li>
+</ol>
+<pre><code>echo &quot;test2&quot; &gt;&gt; /file01.txt</code></pre>
+<ol start="6" type="1">
+<li>Проверили содержимое файла командой:</li>
+</ol>
+<pre><code>cat /file01.txt</code></pre>
+<p>В файле теперь записано:</p>
+<pre><code>Test
+Test2</code></pre>
+<ol start="7" type="1">
+<li><p>От пользователя попробовали записать в файл /tmp/file01.txt слово test4, стерев при этом всю имеющуюся в файле информацию командой. Для этого воспользовалась командой echo “test3” &gt; /tmp/file01.txt</p></li>
+<li><p>Проверили содержимое файла командой</p></li>
+</ol>
+<pre><code>cat /tmp/file01.txt</code></pre>
+<ol start="9" type="1">
+<li><p>От пользователя попробовали удалить файл /tmp/file01.txt командой rm /tmp/file01.txt, однако получила отказ.</p></li>
+<li><p>От суперпользователя командой выполнили команду, снимающую атрибут t (Sticky-бит) с директории /tmp:</p></li>
+</ol>
+<pre><code>chmod -t /tmp</code></pre>
+<p>Покинули режим суперпользователя командой exit.</p>
+<ol start="11" type="1">
+<li>От пользователя проверили, что атрибута t у директории /tmp нет:</li>
+</ol>
+<pre><code>ls -l / | grep tmp</code></pre>
+<ol start="12" type="1">
+<li><p>Повторили предыдущие шаги. Получилось удалить файл</p></li>
+<li><p>Удалось удалить файл от имени пользователя, не являющегося его владельцем.</p></li>
+<li><p>Повысили свои права до суперпользователя и вернули атрибут t на директорию /tmp :</p></li>
+</ol>
+<pre><code>su
+chmod +t /tmp
+exit</code></pre>
+<figure>
+<img src="images/8.png" id="fig:008" style="width:70.0%;height:70.0%" alt="исследование Sticky-бита" /><figcaption aria-hidden="true">исследование Sticky-бита</figcaption>
+</figure>
+<h1 id="выводы">Выводы</h1>
+<p>Изучили механизмы изменения идентификаторов, применения SetUID- и Sticky-битов. Получили практические навыки работы в консоли с дополнительными атрибутами. Также мы рассмотрели работу механизма смены идентификатора процессов пользователей и влияние бита Sticky на запись и удаление файлов.</p>
+<h1 class="unnumbered" id="список-литературы">Список литературы</h1>
+<ol type="1">
+<li><a href="https://losst.ru/neizmenyaemye-fajly-v-linux">КОМАНДА CHATTR В LINUX</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Chattr">chattr</a></li>
+</ol>
