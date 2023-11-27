@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <title>Установка ОС на виртуальную машину</title>
+  <meta name="author" content="Эттеев Сулейман">
+  <title>Отчёт по лабораторной работе №1</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -29,8 +30,20 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
-  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/metropolis.css" id="theme">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  = 20000
   
   
   
@@ -40,123 +53,94 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Установка ОС на виртуальную машину</h1>
-  <p class="author"><p>Эттеев Сулейман</p></p>
-  <p class="institute"><p>Российский Университет Дружбы Народов</p></p>
-  <p class="date">20 ноября, 2023, Москва, Россия</p>
+  <h1 class="title">Отчёт по лабораторной работе №1</h1>
+  <p class="subtitle">Развертывание виртуальной машины</p>
+  <p class="author">Эттеев Сулейман</p>
+</section>
+<section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Содержание</h2>
+
+</nav>
 </section>
 
-<section>
-<section id="цели-и-задачи-работы" class="title-slide slide level1">
-<h1>Цели и задачи работы</h1>
-
-</section>
-<section id="цель-лабораторной-работы" class="slide level2">
-<h2>Цель лабораторной работы</h2>
+<section id="цель-работы" class="slide level1">
+<h1>Цель работы</h1>
 <p>Целью данной работы является приобретение практических навыков
-установки операционной системы на виртуальную машину, настройки
-минимально необходимых для дальнейшей работы сервисов</p>
-</section></section>
-<section>
-<section id="процесс-выполнения-лабораторной-работы"
-class="title-slide slide level1">
-<h1>Процесс выполнения лабораторной работы</h1>
-
+установки операционной системы на виртуальную машину, размещение файлов
+на сервисе Git и подготовка отчета в формате Markdown.</p>
 </section>
-<section id="создаю-виртуальную-машину" class="slide level2">
-<h2>Создаю виртуальную машину</h2>
+<section id="выполнение-лабораторной-работы" class="slide level1">
+<h1>Выполнение лабораторной работы</h1>
+<p>Создаю виртуальную машину</p>
 <figure id="fig:001">
 <img data-src="images/1.png" style="width:70.0%;height:70.0%"
 alt="Создание новой виртуальной машины" />
 <figcaption aria-hidden="true">Создание новой виртуальной
 машины</figcaption>
 </figure>
-</section>
-<section id="задаю-конфигурацию-жёсткого-диска" class="slide level2">
-<h2>Задаю конфигурацию жёсткого диска</h2>
+<p>Задаю конфигурацию жёсткого диска — VDI, динамический виртуальный
+диск.</p>
 <figure id="fig:002">
 <img data-src="images/2.png" style="width:70.0%;height:70.0%"
 alt="Конфигурация жёсткого диска" />
 <figcaption aria-hidden="true">Конфигурация жёсткого диска</figcaption>
 </figure>
-</section>
-<section id="задаю-конфигурацию-жёсткого-диска-1" class="slide level2">
-<h2>Задаю конфигурацию жёсткого диска</h2>
 <figure id="fig:003">
 <img data-src="images/3.png" style="width:70.0%;height:70.0%"
 alt="Конфигурация жёсткого диска" />
 <figcaption aria-hidden="true">Конфигурация жёсткого диска</figcaption>
 </figure>
-</section>
-<section id="задаю-конфигурацию-жёсткого-диска-2" class="slide level2">
-<h2>Задаю конфигурацию жёсткого диска</h2>
 <figure id="fig:004">
 <img data-src="images/4.png" style="width:70.0%;height:70.0%"
 alt="Конфигурация жёсткого диска" />
 <figcaption aria-hidden="true">Конфигурация жёсткого диска</figcaption>
 </figure>
-</section>
-<section id="добавляю-новый-привод-оптических-дисков-и-выбираю-образ"
-class="slide level2">
-<h2>Добавляю новый привод оптических дисков и выбираю образ</h2>
+<p>Добавляю новый привод оптических дисков и выбираю образ</p>
 <figure id="fig:005">
 <img data-src="images/5.png" style="width:70.0%;height:70.0%"
 alt="Конфигурация системы" />
 <figcaption aria-hidden="true">Конфигурация системы</figcaption>
 </figure>
-</section>
-<section id="установка-системы" class="slide level2">
-<h2>Установка системы</h2>
+<p>Запускаю виртуальную машину и выбираю установку системы на жёсткий
+диск. Устанавливаю язык для интерфейса и раскладки клавиатуры</p>
 <figure id="fig:006">
 <img data-src="images/6.png" style="width:70.0%;height:70.0%"
 alt="Приветственный экран" />
 <figcaption aria-hidden="true">Приветственный экран</figcaption>
 </figure>
-</section>
-<section id="установка-системы-1" class="slide level2">
-<h2>Установка системы</h2>
+<p>Указываю параметры установки</p>
 <figure id="fig:007">
 <img data-src="images/7.png" style="width:70.0%;height:70.0%"
 alt="Параметры установки" />
 <figcaption aria-hidden="true">Параметры установки</figcaption>
 </figure>
-</section>
-<section id="установка-системы-2" class="slide level2">
-<h2>Установка системы</h2>
+<p>Перехожу к этапу установки и дожидаюсь его завершения.</p>
 <figure id="fig:008">
 <img data-src="images/8.png" style="width:70.0%;height:70.0%"
 alt="Этап установки" />
 <figcaption aria-hidden="true">Этап установки</figcaption>
 </figure>
-</section>
-<section id="установка-системы-3" class="slide level2">
-<h2>Установка системы</h2>
 <figure id="fig:009">
 <img data-src="images/9.png" style="width:70.0%;height:70.0%"
 alt="Завершение установки" />
 <figcaption aria-hidden="true">Завершение установки</figcaption>
 </figure>
-</section>
-<section id="первый-запуск" class="slide level2">
-<h2>Первый запуск</h2>
+<p>Загружаю с жесткого диска установленную систему</p>
 <figure id="fig:010">
 <img data-src="images/10.png" style="width:70.0%;height:70.0%"
 alt="Запущенная система" />
 <figcaption aria-hidden="true">Запущенная система</figcaption>
 </figure>
-</section></section>
-<section>
-<section id="выводы-по-проделанной-работе"
-class="title-slide slide level1">
-<h1>Выводы по проделанной работе</h1>
-
 </section>
-<section id="вывод" class="slide level2">
-<h2>Вывод</h2>
+<section id="вывод" class="slide level1">
+<h1>Вывод</h1>
 <p>Мы приобрели практические навыки установки операционной системы на
-виртуальную машину, настройки минимально необходимых для дальнейшей
-работы сервисов.</p>
-</section></section>
+виртуальную машину, Целью данной работы является приобретение
+практических навыков установки операционной системы на виртуальную
+машину, разместили файлы работы на сервисе Git и подготовили отчет в
+формате Markdown.</p>
+</section>
     </div>
   </div>
 
