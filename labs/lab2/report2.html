@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Эттеев Сулейман">
+  <title>Отчёт по лабораторной работе №2</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <style>
+    .reveal .sourceCode {  /* see #7635 */
+      overflow: visible;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  = 20000
+  
+  
+  
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Отчёт по лабораторной работе №2</h1>
+  <p class="subtitle">Дискреционное разграничение прав в Linux. Основные
+атрибуты</p>
+  <p class="author">Эттеев Сулейман</p>
+</section>
+<section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Содержание</h2>
+
+</nav>
+</section>
+
+<section id="цель-работы" class="slide level1">
+<h1>Цель работы</h1>
+<p>Получить практические навыки работы в консоли с атрибутами файлов,
+закрепить теоретические основы дискреционного разграничения доступа в
+современных системах с открытым кодом на базе ОС Linux.</p>
+</section>
+<section id="выполнение-лабораторной-работы" class="slide level1">
+<h1>Выполнение лабораторной работы</h1>
+<ol type="1">
+<li><p>В установленной при выполнении предыдущей лабораторной работы
+операционной системе создали учётную запись пользователя guest
+(используя учётную запись администратора) и задали пароль для
+пользователя guest (используя учётную запись администратора)</p></li>
+<li><p>Вошли в систему от имени пользователя guest</p></li>
+<li><p>Командой pwd определили директорию, в которой находимся и
+определили является ли она домашней директорией</p></li>
+<li><p>Уточнили имя нашего пользователя командой whoami:</p></li>
+<li><p>Уточнили имя пользователя, его группу, а также группы, куда
+входит пользователь, командой id. Выведенные значения uid, gid и др.
+Сравнили вывод id с выводом команды groups. Видим, что gid и группы =
+1001(guest)</p></li>
+<li><p>Сравним полученную информацию об имени пользователя с данными,
+выводимыми в приглашении командной строки и убедимся, что они
+совпадают</p></li>
+</ol>
+<figure id="fig:001">
+<img data-src="images/1.png" style="width:70.0%;height:70.0%"
+alt="Информация о пользователе guest" />
+<figcaption aria-hidden="true">Информация о пользователе
+guest</figcaption>
+</figure>
+<ol start="7" type="1">
+<li>Просмотрим файл /etc/passwd Командой: cat /etc/passwd. Найдем в нём
+свою учётную запись. Определим uid пользователя. Определим gid
+пользователя. Сравним найденные значения с полученными в предыдущих
+пунктах. Guest имеет те же идентификаторы 1001, наш пользователь под
+идентификатором 1002.</li>
+</ol>
+<figure id="fig:002">
+<img data-src="images/2.png" style="width:70.0%;height:70.0%"
+alt="Сожержимое файла /etc/passwd" />
+<figcaption aria-hidden="true">Сожержимое файла /etc/passwd</figcaption>
+</figure>
+<ol start="8" type="1">
+<li><p>Определим существующие в системе директории командой ls -l
+/home/</p></li>
+<li><p>Проверили, какие расширенные атрибуты установлены на
+поддиректориях, находящихся в директории /home, командой: lsattr /home.
+Нам не удалось увидеть расширенные атрибуты директорий других
+пользователей, только своей домашней директории.</p></li>
+</ol>
+<figure id="fig:003">
+<img data-src="images/3.png" style="width:70.0%;height:70.0%"
+alt="Расширенные атрибуты" />
+<figcaption aria-hidden="true">Расширенные атрибуты</figcaption>
+</figure>
+<ol start="10" type="1">
+<li><p>Создали в домашней директории поддиректорию dir1 командой mkdir
+dir1. Определим командами ls -l и lsattr, какие права доступа и
+расширенные атрибуты были выставлены на директорию dir1.</p></li>
+<li><p>Сняли с директории dir1 все атрибуты командой chmod 000 dir1 и
+проверили с ls -l помощью правильность выполнения команды
+chmod.</p></li>
+<li><p>Создали в директории dir1 файл file1 командой echo “test” &gt;
+/home/guest/dir1/file1. Поскольку ранее мы отозвали все атрибуты, то тем
+самым лишили всех прав на взаимодействие с dir1.</p></li>
+</ol>
+<figure id="fig:004">
+<img data-src="images/4.png" style="width:70.0%;height:70.0%"
+alt="Снятие атрибутов с директории" />
+<figcaption aria-hidden="true">Снятие атрибутов с
+директории</figcaption>
+</figure>
+<ol start="13" type="1">
+<li>Заполним таблицу «Установленные права и разрешённые действия»,
+выполняя действия от имени владельца директории (файлов), определим
+опытным путём, какие операции разрешены, а какие нет. Если операция
+разрешена, заносим в таблицу знак «+», если не разрешена, знак «-».</li>
+</ol>
+<p>1 - Создание файла</p>
+<p>2- Удаление файла</p>
+<p>3- Запись в файл</p>
+<p>4- Чтение файла</p>
+<p>5- Смена директории</p>
+<p>6- Просмотр файлов в директории</p>
+<p>7 - Переименование файла</p>
+<p>8- Смена атрибутов файла</p>
+<table>
+<caption>Установленные права и разрешённые действия
+{#tbl:rig-act}</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Права директории</th>
+<th style="text-align: left;">Права файла</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>----------(000)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>---x------(100)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>--w-------(200)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>--wx------(300)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>-r--------(400)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>-r-x------(500)</code></td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>-rw-------(600)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d---------(000)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d--x------(100)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>d-w-------(200)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>d-wx------(300)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>dr--------(400)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dr-x------(500)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>-</td>
+<td>+</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>drw-------(600)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>drwx------(700)</code></td>
+<td style="text-align: left;"><code>-rwx------(700)</code></td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+<td>+</td>
+</tr>
+</tbody>
+</table>
+<p>На основании таблицы выше определили минимально необходимые права для
+выполнения операций внутри директории dir1 и заполнили таблицу <span
+class="citation" data-cites="tbl:min-rig">[-@tbl:min-rig]</span>. Для
+заполнения последних двух строк опытным путем проверили минимальные
+права.</p>
+<table>
+<caption>Минимальные права для совершения операций
+{#tbl:min-rig}</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Операция</th>
+<th style="text-align: center;">Права на директорию</th>
+<th style="text-align: center;">Права на файл</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Создание файла</td>
+<td style="text-align: center;"><code>d-wx------ (300)</code></td>
+<td style="text-align: center;"><code>---------- (000)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Удаление файла</td>
+<td style="text-align: center;"><code>d-wx------ (300)</code></td>
+<td style="text-align: center;"><code>---------- (000)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Чтение файла</td>
+<td style="text-align: center;"><code>d--x------ (100)</code></td>
+<td style="text-align: center;"><code>-r-------- (400)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Запись в файл</td>
+<td style="text-align: center;"><code>d--x------ (100)</code></td>
+<td style="text-align: center;"><code>--w------- (200)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Переименование файла</td>
+<td style="text-align: center;"><code>d-wx------ (300)</code></td>
+<td style="text-align: center;"><code>----------(000)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Создание поддиректории</td>
+<td style="text-align: center;"><code>d-wx------ (300)</code></td>
+<td style="text-align: center;"><code>---------- (000)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Удаление поддиректории</td>
+<td style="text-align: center;"><code>d-wx------ (300)</code></td>
+<td style="text-align: center;"><code>---------- (000)</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="вывод" class="slide level1">
+<h1>Вывод</h1>
+<p>В ходе выполнения лабораторной работы были получены навыки работы с
+атрибутами файлов и сведения о разграничении доступа.</p>
+</section>
+<section id="список-литературы" class="slide level1 unnumbered">
+<h1 class="unnumbered">Список литературы</h1>
+<ol type="1">
+<li><a
+href="https://moodle.kstu.ru/pluginfile.php/318215/mod_resource/content/1/Теория_разграничение_прав_пользователи.pdf">Теория
+разграничения прав пользователей</a></li>
+<li><a
+href="https://linuxcommand.ru/razresheniya-dostupa-k-failam/">Разрешения
+доступа к файлам</a></li>
+</ol>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
